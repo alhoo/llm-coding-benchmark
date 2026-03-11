@@ -472,26 +472,26 @@ qwen-397: unsloth/Qwen3.5-397B-A17B-GGUF:UD-IQ1_M
 
 | Problem | gemini-2.5-flash | qwen-122 | qwen-397 | gemini-3-pro-preview |
 |--------|---|---|---|---|
-| p01_two_sum | 100.0 | 100.0 | 100.0 | — |
-| p02_lru_cache | 100.0 | 100.0 | 100.0 | — |
+| p01_two_sum | 100.0 | 100.0 | 100.0 | 100.0 |
+| p02_lru_cache | 100.0 | 100.0 | 100.0 | 100.0 |
 | p03_binary_tree_codec | 60.0 | 60.0 | 60.0 | 60.0 |
-| p04_topological_sort | 100.0 | 100.0 | 100.0 | — |
-| p05_lis | 100.0 | 100.0 | 100.0 | — |
-| p06_merge_k_sorted_lists | 100.0 | 100.0 | 100.0 | — |
-| p07_word_ladder | 100.0 | 100.0 | 100.0 | — |
-| p08_median_sorted_arrays | 100.0 | 100.0 | 100.0 | — |
-| p09_regex_matching | 100.0 | 100.0 | 100.0 | — |
-| p10_async_task_scheduler | 100.0 | 100.0 | 100.0 | — |
-| p11_weighted_job_scheduling | 100.0 | 100.0 | 100.0 | — |
-| p12_lfu_cache | 100.0 | 100.0 | 100.0 | — |
-| p13_smallest_range_k_lists | 5.0 | 66.7 | 100.0 | — |
-| p14_suffix_array | 100.0 | 65.0 | 100.0 | — |
+| p04_topological_sort | 100.0 | 100.0 | 100.0 | 100.0 |
+| p05_lis | 100.0 | 100.0 | 100.0 | 100.0 |
+| p06_merge_k_sorted_lists | 100.0 | 100.0 | 100.0 | 100.0 |
+| p07_word_ladder | 100.0 | 100.0 | 100.0 | 100.0 |
+| p08_median_sorted_arrays | 100.0 | 100.0 | 100.0 | 100.0 |
+| p09_regex_matching | 100.0 | 100.0 | 100.0 | 100.0 |
+| p10_async_task_scheduler | 100.0 | 100.0 | 100.0 | 100.0 |
+| p11_weighted_job_scheduling | 100.0 | 100.0 | 100.0 | 100.0 |
+| p12_lfu_cache | 100.0 | 100.0 | 100.0 | 100.0 |
+| p13_smallest_range_k_lists | 5.0 | 66.7 | 100.0 | 100.0 |
+| p14_suffix_array | 100.0 | 65.0 | 100.0 | 100.0 |
 | p15_max_flow | 68.3 | 64.0 | 100.0 | 100.0 |
 | p16_2sat | 72.5 | 100.0 | 41.0 | 100.0 |
 | p17_min_cost_flow | 100.0 | 100.0 | 100.0 | 100.0 |
-| p18_refactor_order_processor | 80.5 | 79.0 | 100.0 | — |
-| p19_refactor_data_pipeline | 46.0 | 100.0 | 100.0 | — |
-| p20_largest_rectangle_histogram | 100.0 | 100.0 | 100.0 | — |
+| p18_refactor_order_processor | 80.5 | 79.0 | 100.0 | 100.0 |
+| p19_refactor_data_pipeline | 46.0 | 100.0 | 100.0 | 61.0 |
+| p20_largest_rectangle_histogram | 100.0 | 100.0 | 100.0 | 100.0 |
 
 
 ---
