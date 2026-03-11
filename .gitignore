@@ -1,0 +1,6 @@
+results/*
+result_explorer.html
+matrix.csv
+matrix.md
+*.pyc
+llm_solution_*.py

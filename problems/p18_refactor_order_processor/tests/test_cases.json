@@ -1,0 +1,202 @@
+[
+  {
+    "name": "basic_us_order",
+    "order": {
+      "items": [{"price": 10.0, "quantity": 2}],
+      "region": "US",
+      "shipping_address": {"country": "US"}
+    },
+    "expected": {
+      "success": true,
+      "subtotal": 20.0,
+      "tax": 1.7,
+      "shipping": 9.99,
+      "discount": 0.0,
+      "total": 31.69
+    }
+  },
+  {
+    "name": "us_free_shipping",
+    "order": {
+      "items": [{"price": 50.0, "quantity": 2}],
+      "region": "US",
+      "shipping_address": {"country": "US"}
+    },
+    "expected": {
+      "success": true,
+      "subtotal": 100.0,
+      "tax": 8.5,
+      "shipping": 0.0,
+      "discount": 0.0,
+      "total": 108.5
+    }
+  },
+  {
+    "name": "us_food_exempt",
+    "order": {
+      "items": [{"price": 20.0, "quantity": 1, "category": "food"}],
+      "region": "US",
+      "shipping_address": {"country": "US"}
+    },
+    "expected": {
+      "success": true,
+      "subtotal": 20.0,
+      "tax": 0.0,
+      "shipping": 9.99,
+      "discount": 0.0,
+      "total": 29.99
+    }
+  },
+  {
+    "name": "eu_books_reduced",
+    "order": {
+      "items": [
+        {"price": 10.0, "quantity": 1, "category": "books"},
+        {"price": 10.0, "quantity": 1}
+      ],
+      "region": "EU",
+      "shipping_address": {"country": "DE"}
+    },
+    "expected": {
+      "success": true,
+      "subtotal": 20.0,
+      "tax": 2.5,
+      "shipping": 25.0,
+      "discount": 0.0,
+      "total": 47.5
+    }
+  },
+  {
+    "name": "ca_groceries_exempt",
+    "order": {
+      "items": [{"price": 30.0, "quantity": 2, "category": "groceries"}],
+      "region": "CA",
+      "shipping_address": {"country": "CA"}
+    },
+    "expected": {
+      "success": true,
+      "subtotal": 60.0,
+      "tax": 0.0,
+      "shipping": 14.99,
+      "discount": 0.0,
+      "total": 74.99
+    }
+  },
+  {
+    "name": "discount_save10",
+    "order": {
+      "items": [{"price": 100.0, "quantity": 1}],
+      "region": "US",
+      "shipping_address": {"country": "US"},
+      "discount_code": "SAVE10"
+    },
+    "expected": {
+      "success": true,
+      "subtotal": 100.0,
+      "tax": 8.5,
+      "shipping": 0.0,
+      "discount": 10.0,
+      "total": 98.5
+    }
+  },
+  {
+    "name": "discount_flat5",
+    "order": {
+      "items": [{"price": 10.0, "quantity": 1}],
+      "region": "US",
+      "shipping_address": {"country": "US"},
+      "discount_code": "flat5"
+    },
+    "expected": {
+      "success": true,
+      "subtotal": 10.0,
+      "tax": 0.85,
+      "shipping": 9.99,
+      "discount": 5.0,
+      "total": 15.84
+    }
+  },
+  {
+    "name": "validation_null_order",
+    "order": null,
+    "expected": {"success": false, "error": "order_data is required"}
+  },
+  {
+    "name": "validation_no_items",
+    "order": {"region": "US", "shipping_address": {"country": "US"}},
+    "expected": {"success": false, "error": "items is required"}
+  },
+  {
+    "name": "validation_empty_items",
+    "order": {"items": [], "region": "US", "shipping_address": {"country": "US"}},
+    "expected": {"success": false, "error": "items cannot be empty"}
+  },
+  {
+    "name": "validation_bad_region",
+    "order": {
+      "items": [{"price": 10, "quantity": 1}],
+      "region": "XX",
+      "shipping_address": {"country": "US"}
+    },
+    "expected": {"success": false, "error": "region must be US, EU, or CA"}
+  },
+  {
+    "name": "validation_no_shipping",
+    "order": {
+      "items": [{"price": 10, "quantity": 1}],
+      "region": "US"
+    },
+    "expected": {"success": false, "error": "shipping_address is required"}
+  },
+  {
+    "name": "validation_item_missing_price",
+    "order": {
+      "items": [{"quantity": 1}],
+      "region": "US",
+      "shipping_address": {"country": "US"}
+    },
+    "expected": {"success": false, "error": "item 0 missing price"}
+  },
+  {
+    "name": "validation_item_bad_quantity",
+    "order": {
+      "items": [{"price": 10, "quantity": 0}],
+      "region": "US",
+      "shipping_address": {"country": "US"}
+    },
+    "expected": {"success": false, "error": "item 0 quantity must be positive int"}
+  },
+  {
+    "name": "ca_shipping_tiers",
+    "order": {
+      "items": [{"price": 40, "quantity": 2}],
+      "region": "CA",
+      "shipping_address": {"country": "CA"}
+    },
+    "expected": {
+      "success": true,
+      "subtotal": 80.0,
+      "tax": 10.4,
+      "shipping": 8.99,
+      "discount": 0.0,
+      "total": 99.39
+    }
+  },
+  {
+    "name": "discount_exceeds_total",
+    "order": {
+      "items": [{"price": 5, "quantity": 1}],
+      "region": "US",
+      "shipping_address": {"country": "US"},
+      "discount_code": "FLAT15"
+    },
+    "expected": {
+      "success": true,
+      "subtotal": 5.0,
+      "tax": 0.43,
+      "shipping": 9.99,
+      "discount": 15.0,
+      "total": 0.41
+    }
+  }
+]

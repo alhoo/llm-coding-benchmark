@@ -1,0 +1,49 @@
+[
+  {
+    "name": "priority_ordering",
+    "description": "Higher priority tasks run before lower priority",
+    "max_concurrent": 1,
+    "tasks": [
+      {"id": "low",  "priority": 1,  "delay": 0.01},
+      {"id": "high", "priority": 10, "delay": 0.01},
+      {"id": "mid",  "priority": 5,  "delay": 0.01}
+    ],
+    "expected_order_constraint": "high before mid before low"
+  },
+  {
+    "name": "concurrency_limit",
+    "description": "Never exceeds max_concurrent running tasks",
+    "max_concurrent": 2,
+    "tasks": [
+      {"id": "t1", "priority": 1, "delay": 0.05},
+      {"id": "t2", "priority": 1, "delay": 0.05},
+      {"id": "t3", "priority": 1, "delay": 0.05},
+      {"id": "t4", "priority": 1, "delay": 0.05}
+    ],
+    "expected_order_constraint": "max 2 concurrent"
+  },
+  {
+    "name": "all_tasks_complete",
+    "description": "All scheduled tasks must eventually complete",
+    "max_concurrent": 3,
+    "tasks": [
+      {"id": "t1", "priority": 5, "delay": 0.01},
+      {"id": "t2", "priority": 3, "delay": 0.01},
+      {"id": "t3", "priority": 7, "delay": 0.01},
+      {"id": "t4", "priority": 1, "delay": 0.01},
+      {"id": "t5", "priority": 9, "delay": 0.01}
+    ],
+    "expected_order_constraint": "all 5 complete"
+  },
+  {
+    "name": "fifo_tiebreak",
+    "description": "Equal priority tasks run in submission order",
+    "max_concurrent": 1,
+    "tasks": [
+      {"id": "first",  "priority": 5, "delay": 0.01},
+      {"id": "second", "priority": 5, "delay": 0.01},
+      {"id": "third",  "priority": 5, "delay": 0.01}
+    ],
+    "expected_order_constraint": "first before second before third"
+  }
+]

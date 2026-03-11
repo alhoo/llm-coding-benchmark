@@ -2,6 +2,7 @@
 Problem evaluator - runs tests and grades solutions.
 """
 
+import os
 import subprocess
 import json
 from pathlib import Path
@@ -70,12 +71,14 @@ class ProblemEvaluator:
         if not test_file.exists():
             raise FileNotFoundError(f"Test file not found: {test_file}")
         
-        # Run pytest
+        # Run pytest with cwd=problem_dir; pass path relative to cwd so pytest finds the file
+        test_path_rel = Path("tests") / "test_python.py"
         result = subprocess.run(
-            ["pytest", str(test_file), "-v", "--tb=short", "--json-report", "--json-report-file=report.json"],
+            ["pytest", str(test_path_rel), "-v", "--tb=short", "--json-report", "--json-report-file=report.json"],
             capture_output=True,
             text=True,
-            cwd=problem_dir
+            cwd=problem_dir,
+            env={**os.environ, "BENCHMARK_SOLUTION_FILE": solution_file.name},
         )
         
         # Parse results

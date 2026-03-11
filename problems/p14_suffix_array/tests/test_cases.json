@@ -1,0 +1,82 @@
+[
+  {
+    "name": "banana",
+    "description": "Classic suffix array example",
+    "s": "banana",
+    "expected_sa": [5, 3, 1, 0, 4, 2],
+    "expected_lcp": [0, 1, 3, 0, 0, 2],
+    "expected_distinct": 15
+  },
+  {
+    "name": "abab",
+    "description": "Repeating two-char pattern",
+    "s": "abab",
+    "expected_sa": [2, 0, 3, 1],
+    "expected_lcp": [0, 2, 0, 1],
+    "expected_distinct": 7
+  },
+  {
+    "name": "all_same",
+    "description": "All identical characters — maximum LCP overlap",
+    "s": "aaaa",
+    "expected_sa": [3, 2, 1, 0],
+    "expected_lcp": [0, 1, 2, 3],
+    "expected_distinct": 4
+  },
+  {
+    "name": "all_unique",
+    "description": "All distinct characters — zero LCP",
+    "s": "abcde",
+    "expected_sa": [0, 1, 2, 3, 4],
+    "expected_lcp": [0, 0, 0, 0, 0],
+    "expected_distinct": 15
+  },
+  {
+    "name": "single_char",
+    "description": "Single character string",
+    "s": "z",
+    "expected_sa": [0],
+    "expected_lcp": [0],
+    "expected_distinct": 1
+  },
+  {
+    "name": "two_chars",
+    "description": "Two character string",
+    "s": "ba",
+    "expected_sa": [1, 0],
+    "expected_lcp": [0, 0],
+    "expected_distinct": 3
+  },
+  {
+    "name": "mississippi",
+    "description": "Classic mississippi example",
+    "s": "mississippi",
+    "expected_sa": [10, 7, 4, 1, 0, 9, 8, 6, 3, 5, 2],
+    "expected_lcp": [0, 1, 1, 4, 0, 0, 1, 0, 2, 1, 3],
+    "expected_distinct": 53
+  },
+  {
+    "name": "abcabc",
+    "description": "Full period repetition",
+    "s": "abcabc",
+    "expected_sa": [3, 0, 4, 1, 5, 2],
+    "expected_lcp": [0, 3, 0, 2, 0, 1],
+    "expected_distinct": 15
+  },
+  {
+    "name": "aab",
+    "description": "Short string with repeated prefix",
+    "s": "aab",
+    "expected_sa": [0, 1, 2],
+    "expected_lcp": [0, 1, 0],
+    "expected_distinct": 5
+  },
+  {
+    "name": "abacaba",
+    "description": "Palindromic-like structure",
+    "s": "abacaba",
+    "expected_sa": [6, 4, 0, 2, 5, 1, 3],
+    "expected_lcp": [0, 1, 3, 1, 0, 2, 0],
+    "expected_distinct": 21
+  }
+]

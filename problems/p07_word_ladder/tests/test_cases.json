@@ -1,0 +1,58 @@
+[
+  {
+    "name": "standard_path",
+    "description": "Standard example: hit -> cog",
+    "begin_word": "hit",
+    "end_word": "cog",
+    "word_list": ["hot", "dot", "dog", "lot", "log", "cog"],
+    "expected": 5
+  },
+  {
+    "name": "end_not_in_list",
+    "description": "end_word not in word_list",
+    "begin_word": "hit",
+    "end_word": "cog",
+    "word_list": ["hot", "dot", "dog", "lot", "log"],
+    "expected": 0
+  },
+  {
+    "name": "single_step",
+    "description": "One transformation needed",
+    "begin_word": "hot",
+    "end_word": "dot",
+    "word_list": ["dot", "dog"],
+    "expected": 2
+  },
+  {
+    "name": "unreachable",
+    "description": "end_word in list but no valid path",
+    "begin_word": "abc",
+    "end_word": "xyz",
+    "word_list": ["xyz"],
+    "expected": 0
+  },
+  {
+    "name": "longer_chain",
+    "description": "Path requires 6+ steps",
+    "begin_word": "hit",
+    "end_word": "dog",
+    "word_list": ["hot", "dot", "dog", "lot", "log"],
+    "expected": 4
+  },
+  {
+    "name": "two_letter_words",
+    "description": "Short words",
+    "begin_word": "ab",
+    "end_word": "cd",
+    "word_list": ["ad", "cd"],
+    "expected": 3
+  },
+  {
+    "name": "direct_transformation",
+    "description": "begin_word one letter away from end_word",
+    "begin_word": "a",
+    "end_word": "c",
+    "word_list": ["b", "c"],
+    "expected": 2
+  }
+]

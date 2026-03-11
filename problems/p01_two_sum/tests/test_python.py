@@ -2,11 +2,22 @@
 Test harness for Two-Sum problem (Python)
 """
 
-import pytest
+import importlib.util
 import json
 import time
+import pytest
 from pathlib import Path
-from typing import List, Callable
+from typing import Callable
+
+
+def _load_solution():
+    spec = importlib.util.spec_from_file_location(
+        "p01_two_sum_solution",
+        Path(__file__).parent.parent / "solutions" / "solution.py",
+    )
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
 
 
 def load_test_cases():
@@ -22,12 +33,7 @@ class TestTwoSum:
     
     @pytest.fixture
     def solution(self) -> Callable:
-        """
-        Import the solution function.
-        Override this fixture to test custom implementations.
-        """
-        from solutions.solution import two_sum
-        return two_sum
+        return _load_solution().two_sum
     
     def test_basic_case(self, solution):
         """Test basic positive numbers."""
@@ -72,17 +78,19 @@ class TestTwoSum:
         
         for size in sizes:
             nums = list(range(size))
-            target = size - 3  # Second-to-last and third-to-last elements
-            
+            # Place the unique answer at the very end to stress-test worst case
+            target = (size - 2) + (size - 1)  # nums[-2] + nums[-1]
+
             start = time.perf_counter()
             result = solution(nums, target)
             end = time.perf_counter()
-            
+
             times.append(end - start)
-            
-            # Verify correctness
-            assert sorted(result) == [size - 3, size - 1] or \
-                   sorted(result) == [0, size - 3]
+
+            # Verify correctness: result must be a valid pair
+            assert len(result) == 2
+            i, j = result
+            assert nums[i] + nums[j] == target, f"Invalid result {result} for target {target}"
         
         # Check that doubling input size roughly doubles time (allows 3x tolerance)
         # For O(n²), doubling size would quadruple time

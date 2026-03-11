@@ -6,7 +6,7 @@
 
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Problems](https://img.shields.io/badge/Problems-10-green.svg)](#problem-catalog)
+[![Problems](https://img.shields.io/badge/Problems-15-green.svg)](#problem-catalog)
 [![Languages](https://img.shields.io/badge/Languages-4-orange.svg)](#supported-languages)
 
 *A curated collection of algorithmically complex coding problems designed to stress-test  
@@ -67,6 +67,12 @@ This benchmark suite serves AI research labs and model evaluation teams by provi
 | P08 | [Median of Two Sorted Arrays](#p08-median-two-sorted-arrays) | Expert | Binary search, O(log(min(m,n))) | 22% | 28% |
 | P09 | [Regular Expression Matching](#p09-regex-matching) | Expert | Dynamic programming, Recursion | 18% | 24% |
 | P10 | [Concurrent Task Scheduler](#p10-async-task-scheduler) | Expert | Async/await, Thread safety, Priority queues | 15% | 20% |
+| P11 | [Weighted Job Scheduling](#p11-weighted-job-scheduling) | Expert | DP, Binary search, Interval scheduling | 12% | 16% |
+| P12 | [LFU Cache](#p12-lfu-cache) | Expert | Frequency buckets, OrderedDict, O(1) design | 10% | 14% |
+| P13 | [Smallest Range K Lists](#p13-smallest-range-k-lists) | Expert | Min-heap, Sliding window, Multi-list traversal | 12% | 15% |
+| P18 | [Refactor Order Processor](#p18-refactor-order-processor) | Expert | Refactoring, Pattern recognition, Code organization | — | — |
+| P19 | [Refactor Data Pipeline](#p19-refactor-data-pipeline) | Expert | Refactoring, Aggregation abstraction, DRY | — | — |
+| P20 | [Largest Rectangle in Histogram](#p20-largest-rectangle-histogram) | Expert | Monotonic stack, O(n²)→O(n) optimization | — | — |
 
 **Pass Rate**: Percentage of LLM-generated solutions that pass ALL test cases on first attempt.
 
@@ -97,8 +103,11 @@ llm-coding-benchmark/
 │   ├── run_benchmark.py               # Main benchmark runner
 │   ├── llm_client.py                  # OpenAI/Anthropic integration
 │   ├── evaluator.py                   # Test execution & grading
-│   └── reporter.py                    # Results visualization
+│   ├── reporter.py                    # Results visualization
+│   ├── build_matrix.py                # Build problem×model results matrix
+│   └── build_result_explorer.py       # Interactive HTML result explorer
 ├── results/
+│   ├── cache/                         # Cached per-problem results (resume support)
 │   ├── gpt4_results.json              # GPT-4 benchmark results
 │   ├── claude_results.json            # Claude 3.5 results
 │   └── comparison_report.html         # Side-by-side comparison
@@ -124,7 +133,12 @@ python -m harness.run_benchmark --model claude-3-sonnet-20240229 --problems all
 
 # Run specific problem
 python -m harness.run_benchmark --model gpt-4-turbo --problems p01,p05,p08
+
+# Disable cache and run all problems from scratch
+python -m harness.run_benchmark --model gpt-4-turbo --problems all --no-cache
 ```
+
+**Resume support**: Results are cached in `results/cache/` (or `{output-dir}/cache/`) per model, language, and problem. If a run is interrupted, re-run with the same arguments to resume from where you left off—cached problems are skipped. Use `--no-cache` to force a fresh run.
 
 ### Evaluating Custom LLM Output
 
@@ -143,6 +157,39 @@ python -m harness.reporter \
     --results results/gpt4_results.json results/claude_results.json \
     --output comparison_report.html
 ```
+
+### Building Results Matrix
+
+Create a matrix (rows = problem, columns = model) from multiple result files:
+
+```bash
+# From a directory of result JSONs
+python -m harness.build_matrix --dir results
+
+# From specific files
+python -m harness.build_matrix results/*.json
+
+# Output to CSV
+python -m harness.build_matrix --dir results -o matrix.csv -f csv
+```
+
+### Result Explorer
+
+Build an interactive HTML explorer to drill down into results: **Model → Run → Problem → Details**.
+
+```bash
+# Generate result_explorer.html (default)
+python -m harness.build_result_explorer
+
+# Custom paths
+python -m harness.build_result_explorer --dir results -m matrix.csv -o result_explorer.html
+```
+
+Open the generated HTML in a browser to:
+- View the summary matrix (problem × model scores)
+- Drill down by model to see all runs
+- Select a run to see per-problem scores
+- Click a problem for full details (generated code, test output, evaluation)
 
 ---
 
@@ -209,6 +256,26 @@ Output: 2.5
 
 **GPT-4 Pass Rate**: 22% (Most submissions use O(m+n) merge)
 **Claude 3.5 Pass Rate**: 28%
+
+---
+
+### P20: Largest Rectangle in Histogram (Expert)
+
+**Problem Statement**:
+You are given a **working O(n²) implementation** that finds the largest rectangle area in a histogram. Your task: **optimize it to O(n)** while preserving correctness.
+
+**Why This is Hard**:
+- The optimal solution requires a **monotonic stack** pattern—very non-obvious
+- Naive approach: for each bar, expand left/right to find boundaries (O(n²))
+- Optimal: when a shorter bar appears, it defines the right boundary for all taller bars in the stack
+- Most LLMs either keep O(n²) (fails timing) or introduce off-by-one errors in the stack logic
+
+**Rubric**:
+- ✅ Correctness (50%): All test cases pass
+- ✅ Time Complexity (40%): O(n) verified via timing on 50,000 bars
+- ✅ Code Quality (10%): Clear implementation
+
+**Expected Pass Rate**: Very low (~5–15%) — tests pattern recognition and algorithmic insight
 
 ---
 
@@ -394,6 +461,38 @@ pip install -e .
 - **Objective**: Clear pass/fail criteria
 - **Representative**: Tests real-world coding skills
 - **Fair**: Solvable within token limits
+
+---
+
+## Results
+
+qwen-122: unsloth/Qwen3.5-122B-A10B-GGUF:UD-Q5_K_XL
+
+qwen-397: unsloth/Qwen3.5-397B-A17B-GGUF:UD-IQ1_M
+
+| Problem | gemini-2.5-flash | qwen-122 | qwen-397 | gemini-3-pro-preview |
+|--------|---|---|---|---|
+| p01_two_sum | 100.0 | 100.0 | 100.0 | — |
+| p02_lru_cache | 100.0 | 100.0 | 100.0 | — |
+| p03_binary_tree_codec | 60.0 | 60.0 | 60.0 | 60.0 |
+| p04_topological_sort | 100.0 | 100.0 | 100.0 | — |
+| p05_lis | 100.0 | 100.0 | 100.0 | — |
+| p06_merge_k_sorted_lists | 100.0 | 100.0 | 100.0 | — |
+| p07_word_ladder | 100.0 | 100.0 | 100.0 | — |
+| p08_median_sorted_arrays | 100.0 | 100.0 | 100.0 | — |
+| p09_regex_matching | 100.0 | 100.0 | 100.0 | — |
+| p10_async_task_scheduler | 100.0 | 100.0 | 100.0 | — |
+| p11_weighted_job_scheduling | 100.0 | 100.0 | 100.0 | — |
+| p12_lfu_cache | 100.0 | 100.0 | 100.0 | — |
+| p13_smallest_range_k_lists | 5.0 | 66.7 | 100.0 | — |
+| p14_suffix_array | 100.0 | 65.0 | 100.0 | — |
+| p15_max_flow | 68.3 | 64.0 | 100.0 | 100.0 |
+| p16_2sat | 72.5 | 100.0 | 41.0 | 100.0 |
+| p17_min_cost_flow | 100.0 | 100.0 | 100.0 | 100.0 |
+| p18_refactor_order_processor | 80.5 | 79.0 | 100.0 | — |
+| p19_refactor_data_pipeline | 46.0 | 100.0 | 100.0 | — |
+| p20_largest_rectangle_histogram | 100.0 | 100.0 | 100.0 | — |
+
 
 ---
 

@@ -1,0 +1,66 @@
+[
+  {
+    "name": "basic_lfu_eviction",
+    "description": "Evicts the least frequently used key",
+    "capacity": 2,
+    "operations": ["put", "put", "get", "put", "get", "get", "put", "get", "get", "get"],
+    "args": [[1, 1], [2, 2], [1], [3, 3], [2], [3], [4, 4], [1], [3], [4]],
+    "expected": [null, null, 1, null, -1, 3, null, -1, 3, 4]
+  },
+  {
+    "name": "zero_capacity",
+    "description": "Capacity 0 stores nothing",
+    "capacity": 0,
+    "operations": ["put", "get"],
+    "args": [[0, 0], [0]],
+    "expected": [null, -1]
+  },
+  {
+    "name": "capacity_one",
+    "description": "Capacity 1 evicts on every new insert",
+    "capacity": 1,
+    "operations": ["put", "get", "put", "get", "get"],
+    "args": [[1, 10], [1], [2, 20], [1], [2]],
+    "expected": [null, 10, null, -1, 20]
+  },
+  {
+    "name": "frequency_tiebreak_by_lru",
+    "description": "When multiple keys have the same frequency, evict the LRU one",
+    "capacity": 3,
+    "operations": ["put", "put", "put", "get", "get", "put", "get"],
+    "args": [[1, 1], [2, 2], [3, 3], [1], [2], [4, 4], [3]],
+    "expected": [null, null, null, 1, 2, null, -1]
+  },
+  {
+    "name": "overwrite_updates_frequency",
+    "description": "Putting an existing key updates value and increases frequency",
+    "capacity": 2,
+    "operations": ["put", "put", "put", "put", "get"],
+    "args": [[1, 1], [2, 2], [1, 10], [3, 3], [1]],
+    "expected": [null, null, null, null, 10]
+  },
+  {
+    "name": "get_missing_key",
+    "description": "Getting a non-existent key returns -1",
+    "capacity": 3,
+    "operations": ["get", "put", "get"],
+    "args": [[99], [1, 100], [99]],
+    "expected": [-1, null, -1]
+  },
+  {
+    "name": "promote_through_frequencies",
+    "description": "Key promoted through multiple frequency levels",
+    "capacity": 2,
+    "operations": ["put", "put", "get", "get", "get", "put", "get"],
+    "args": [[1, 1], [2, 2], [1], [1], [1], [3, 3], [2]],
+    "expected": [null, null, 1, 1, 1, null, -1]
+  },
+  {
+    "name": "evict_then_reinsert",
+    "description": "Evicted key can be re-inserted as a fresh entry",
+    "capacity": 2,
+    "operations": ["put", "put", "get", "put", "get", "put", "get"],
+    "args": [[1, 1], [2, 2], [1], [3, 3], [2], [2, 20], [2]],
+    "expected": [null, null, 1, null, -1, null, 20]
+  }
+]

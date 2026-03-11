@@ -5,8 +5,9 @@ LLM Coding Benchmark Suite - Main benchmark runner
 import argparse
 import os
 import json
+import re
 from pathlib import Path
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 from datetime import datetime
 
 from .llm_client import LLMClient
@@ -22,7 +23,9 @@ class BenchmarkRunner:
         model: str,
         problems: List[str],
         language: str = "python",
-        output_dir: Path = Path("results")
+        output_dir: Path = Path("results"),
+        use_cache: bool = True,
+        cache_dir: Optional[Path] = None,
     ):
         """
         Initialize benchmark runner.
@@ -32,12 +35,18 @@ class BenchmarkRunner:
             problems: List of problem IDs to run (e.g., ["p01", "p02"])
             language: Programming language for solutions
             output_dir: Directory to save results
+            use_cache: Whether to use cached results for resume support
+            cache_dir: Directory for cache (default: output_dir / "cache")
         """
         self.model = model
         self.problems = problems
         self.language = language
         self.output_dir = output_dir
         self.output_dir.mkdir(parents=True, exist_ok=True)
+        self.use_cache = use_cache
+        self.cache_dir = cache_dir or (output_dir / "cache")
+        if use_cache:
+            self.cache_dir.mkdir(parents=True, exist_ok=True)
         
         self.llm_client = LLMClient(model=model)
         self.evaluator = ProblemEvaluator(language=language)
@@ -59,7 +68,7 @@ class BenchmarkRunner:
         results = {
             "model": self.model,
             "language": self.language,
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now().isoformat(),
             "problems": []
         }
         
@@ -67,8 +76,21 @@ class BenchmarkRunner:
             print(f"\n[{i}/{len(self.problems)}] Running {problem_id}...")
             
             try:
+                # Check cache first for resume support
+                if self.use_cache:
+                    cached = self._load_cached_result(problem_id)
+                    if cached is not None:
+                        results["problems"].append(cached)
+                        score = cached["total_score"]
+                        print(f"  ✓ Cached: {score}/100")
+                        continue
+                
                 problem_result = self._run_single_problem(problem_id)
                 results["problems"].append(problem_result)
+                
+                # Save to cache for resume support
+                if self.use_cache:
+                    self._save_cached_result(problem_id, problem_result)
                 
                 score = problem_result["total_score"]
                 print(f"  ✓ Completed: {score}/100")
@@ -104,6 +126,13 @@ class BenchmarkRunner:
         problem_file = problem_dir / "problem.md"
         with open(problem_file) as f:
             problem_statement = f.read()
+
+        # For refactoring problems, append legacy code if present
+        legacy_file = problem_dir / "legacy_code.py"
+        if legacy_file.exists():
+            with open(legacy_file) as f:
+                legacy_code = f.read()
+            problem_statement += "\n\n---\n\n## Full Legacy Implementation\n\n```python\n" + legacy_code + "\n```"
         
         # Get LLM solution
         print("  Querying LLM...")
@@ -134,11 +163,30 @@ class BenchmarkRunner:
             "total_score": evaluation.get("total_score", 0)
         }
     
+    def _get_cache_path(self, problem_id: str) -> Path:
+        """Get cache file path for a problem (model + language + problem_id)."""
+        safe_model = re.sub(r"[^\w\-.]", "_", self.model)
+        return self.cache_dir / f"{safe_model}_{self.language}_{problem_id}.json"
+    
+    def _load_cached_result(self, problem_id: str) -> Optional[Dict[str, Any]]:
+        """Load cached result for a problem if it exists."""
+        cache_path = self._get_cache_path(problem_id)
+        if not cache_path.exists():
+            return None
+        try:
+            with open(cache_path) as f:
+                return json.load(f)
+        except (json.JSONDecodeError, IOError):
+            return None
+    
+    def _save_cached_result(self, problem_id: str, result: Dict[str, Any]):
+        """Save result to cache for resume support."""
+        cache_path = self._get_cache_path(problem_id)
+        with open(cache_path, "w") as f:
+            json.dump(result, f, indent=2)
+    
     def _extract_code(self, llm_response: str) -> str:
         """Extract code from LLM response."""
-        # Look for code blocks
-        import re
-        
         # Try to find code fence
         pattern = r"```(?:python|javascript|java|cpp)?\n(.*?)```"
         matches = re.findall(pattern, llm_response, re.DOTALL)
@@ -200,13 +248,14 @@ def main():
     parser.add_argument("--problems", default="all", help="Comma-separated problem IDs or 'all'")
     parser.add_argument("--language", default="python", choices=["python", "javascript", "java", "cpp"])
     parser.add_argument("--output-dir", default="results", help="Output directory for results")
+    parser.add_argument("--no-cache", action="store_true", help="Disable cache; run all problems from scratch")
     
     args = parser.parse_args()
     
     # Determine which problems to run
     if args.problems == "all":
         problems_dir = Path("problems")
-        problems = [p.name for p in problems_dir.iterdir() if p.is_dir()]
+        problems = [p.name for p in problems_dir.iterdir() if p.is_dir() if '__' not in p.name]
     else:
         problems = args.problems.split(",")
     
@@ -215,7 +264,8 @@ def main():
         model=args.model,
         problems=problems,
         language=args.language,
-        output_dir=Path(args.output_dir)
+        output_dir=Path(args.output_dir),
+        use_cache=not args.no_cache,
     )
     
     runner.run()

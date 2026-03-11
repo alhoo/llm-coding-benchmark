@@ -1,0 +1,117 @@
+[
+  {
+    "name": "basic_sum_avg",
+    "records": [{"amount": 10}, {"amount": 20}, {"amount": 30}],
+    "schema": {
+      "aggregations": [
+        {"field": "amount", "op": "sum"},
+        {"field": "amount", "op": "avg"}
+      ]
+    },
+    "expected": {
+      "success": true,
+      "data": {"amount_sum": 60, "amount_avg": 20.0}
+    }
+  },
+  {
+    "name": "count_and_min_max",
+    "records": [{"id": 1, "val": 5}, {"id": 2, "val": 15}, {"id": 3, "val": 10}],
+    "schema": {
+      "aggregations": [
+        {"field": "id", "op": "count"},
+        {"field": "val", "op": "min"},
+        {"field": "val", "op": "max"}
+      ]
+    },
+    "expected": {
+      "success": true,
+      "data": {"id_count": 3, "val_min": 5, "val_max": 15}
+    }
+  },
+  {
+    "name": "concat_with_separator",
+    "records": [{"name": "a"}, {"name": "b"}, {"name": "c"}],
+    "schema": {
+      "aggregations": [{"field": "name", "op": "concat", "separator": ";"}]
+    },
+    "expected": {
+      "success": true,
+      "data": {"name_concat": "a;b;c"}
+    }
+  },
+  {
+    "name": "concat_default_sep",
+    "records": [{"x": 1}, {"x": 2}],
+    "schema": {"aggregations": [{"field": "x", "op": "concat"}]},
+    "expected": {
+      "success": true,
+      "data": {"x_concat": "1,2"}
+    }
+  },
+  {
+    "name": "skip_none_and_non_numeric",
+    "records": [{"a": 10}, {"a": null}, {"a": "x"}, {"a": 20}],
+    "schema": {"aggregations": [{"field": "a", "op": "sum"}, {"field": "a", "op": "count"}]},
+    "expected": {
+      "success": true,
+      "data": {"a_sum": 30, "a_count": 3}
+    }
+  },
+  {
+    "name": "empty_records",
+    "records": [],
+    "schema": {"aggregations": [{"field": "x", "op": "sum"}, {"field": "x", "op": "min"}, {"field": "x", "op": "max"}]},
+    "expected": {
+      "success": true,
+      "data": {"x_sum": 0, "x_min": 0, "x_max": 0}
+    }
+  },
+  {
+    "name": "validation_null_records",
+    "records": null,
+    "schema": {"aggregations": []},
+    "expected": {"success": false, "error": "records is required"}
+  },
+  {
+    "name": "validation_null_schema",
+    "records": [],
+    "schema": null,
+    "expected": {"success": false, "error": "schema is required"}
+  },
+  {
+    "name": "validation_no_aggregations",
+    "records": [],
+    "schema": {},
+    "expected": {"success": false, "error": "schema.aggregations is required"}
+  },
+  {
+    "name": "validation_bad_op",
+    "records": [],
+    "schema": {"aggregations": [{"field": "x", "op": "invalid"}]},
+    "expected": {"success": false, "error": "aggregation 0 op must be sum, avg, count, min, max, or concat"}
+  },
+  {
+    "name": "validation_missing_field",
+    "records": [],
+    "schema": {"aggregations": [{"op": "sum"}]},
+    "expected": {"success": false, "error": "aggregation 0 missing field"}
+  },
+  {
+    "name": "skip_non_dict_records",
+    "records": [{"a": 1}, "invalid", {"a": 2}, null, {"a": 3}],
+    "schema": {"aggregations": [{"field": "a", "op": "sum"}]},
+    "expected": {"success": true, "data": {"a_sum": 6}}
+  },
+  {
+    "name": "avg_single_value",
+    "records": [{"x": 1}, {"x": null}, {"y": 2}],
+    "schema": {"aggregations": [{"field": "x", "op": "avg"}]},
+    "expected": {"success": true, "data": {"x_avg": 1.0}}
+  },
+  {
+    "name": "avg_no_numeric_values",
+    "records": [{"x": null}, {"x": "a"}],
+    "schema": {"aggregations": [{"field": "x", "op": "avg"}]},
+    "expected": {"success": true, "data": {"x_avg": 0}}
+  }
+]

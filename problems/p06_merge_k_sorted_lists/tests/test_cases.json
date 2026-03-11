@@ -1,0 +1,50 @@
+[
+  {
+    "name": "three_lists",
+    "description": "Three sorted linked lists",
+    "lists": [[1, 4, 5], [1, 3, 4], [2, 6]],
+    "expected": [1, 1, 2, 3, 4, 4, 5, 6]
+  },
+  {
+    "name": "empty_input",
+    "description": "No lists provided",
+    "lists": [],
+    "expected": []
+  },
+  {
+    "name": "single_empty_list",
+    "description": "One empty list",
+    "lists": [[]],
+    "expected": []
+  },
+  {
+    "name": "single_list",
+    "description": "Single non-empty list",
+    "lists": [[1, 2, 3]],
+    "expected": [1, 2, 3]
+  },
+  {
+    "name": "two_lists",
+    "description": "Two sorted lists of equal length",
+    "lists": [[1, 3, 5], [2, 4, 6]],
+    "expected": [1, 2, 3, 4, 5, 6]
+  },
+  {
+    "name": "with_negatives",
+    "description": "Lists containing negative values",
+    "lists": [[-3, -1, 0], [-2, 2, 4]],
+    "expected": [-3, -2, -1, 0, 2, 4]
+  },
+  {
+    "name": "unequal_lengths",
+    "description": "Lists of different lengths",
+    "lists": [[1], [2, 3, 4, 5], [6]],
+    "expected": [1, 2, 3, 4, 5, 6]
+  },
+  {
+    "name": "duplicate_values",
+    "description": "Duplicate values across lists",
+    "lists": [[1, 1, 2], [1, 2, 3]],
+    "expected": [1, 1, 1, 2, 2, 3]
+  }
+]

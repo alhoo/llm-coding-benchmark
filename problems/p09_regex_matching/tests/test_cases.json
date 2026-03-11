@@ -1,0 +1,86 @@
+[
+  {
+    "name": "no_match_simple",
+    "description": "Pattern too short",
+    "s": "aa",
+    "p": "a",
+    "expected": false
+  },
+  {
+    "name": "star_multiple",
+    "description": "'*' matches zero or more preceding chars",
+    "s": "aa",
+    "p": "a*",
+    "expected": true
+  },
+  {
+    "name": "dot_star_any",
+    "description": "'.*' matches any sequence",
+    "s": "ab",
+    "p": ".*",
+    "expected": true
+  },
+  {
+    "name": "c_star_zero",
+    "description": "'c*' matches zero c's, combined with 'a*b'",
+    "s": "aab",
+    "p": "c*a*b",
+    "expected": true
+  },
+  {
+    "name": "mississippi",
+    "description": "Complex case that should NOT match",
+    "s": "mississippi",
+    "p": "mis*is*p*.",
+    "expected": false
+  },
+  {
+    "name": "empty_string_star_pattern",
+    "description": "Empty string matches 'a*' (zero a's)",
+    "s": "",
+    "p": "a*",
+    "expected": true
+  },
+  {
+    "name": "both_empty",
+    "description": "Both string and pattern are empty",
+    "s": "",
+    "p": "",
+    "expected": true
+  },
+  {
+    "name": "string_not_empty_pattern_empty",
+    "description": "Non-empty string against empty pattern",
+    "s": "a",
+    "p": "",
+    "expected": false
+  },
+  {
+    "name": "dot_matches_any",
+    "description": "'.' matches exactly one character",
+    "s": "abc",
+    "p": "a.c",
+    "expected": true
+  },
+  {
+    "name": "dot_star_complex",
+    "description": "Complex pattern with dot-star",
+    "s": "abcdef",
+    "p": "a.*f",
+    "expected": true
+  },
+  {
+    "name": "repeated_char_star",
+    "description": "Star allows arbitrary repetition",
+    "s": "aaaa",
+    "p": "a*",
+    "expected": true
+  },
+  {
+    "name": "partial_match_fails",
+    "description": "Pattern must match entire string",
+    "s": "abc",
+    "p": "ab",
+    "expected": false
+  }
+]

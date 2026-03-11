@@ -6,7 +6,8 @@ import os
 from typing import Optional
 from langchain_openai import ChatOpenAI
 from langchain_anthropic import ChatAnthropic
-from langchain.prompts import ChatPromptTemplate
+from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_core.messages import SystemMessage, HumanMessage
 
 
 class LLMClient:
@@ -17,7 +18,7 @@ class LLMClient:
         Initialize LLM client.
         
         Args:
-            model: Model name (e.g., "gpt-4-turbo", "claude-3-sonnet-20240229")
+            model: Model name (e.g., "gpt-4-turbo", "claude-3-sonnet-20240229", "gemini-1.5-pro")
             temperature: Sampling temperature
         """
         self.model = model
@@ -38,8 +39,19 @@ class LLMClient:
                 temperature=self.temperature,
                 api_key=os.getenv("ANTHROPIC_API_KEY")
             )
+        elif "gemini" in self.model:
+            return ChatGoogleGenerativeAI(
+                model=self.model,
+                temperature=self.temperature,
+                api_key=os.getenv("GOOGLE_API_KEY") or os.getenv("GEMINI_API_KEY")
+            )
         else:
-            raise ValueError(f"Unsupported model: {self.model}")
+            return ChatOpenAI(
+                model=self.model,
+                temperature=self.temperature,
+                base_url=os.environ.get("OPENAI_BASEURL"),
+                api_key=os.getenv("OPENAI_API_KEY")
+            )
     
     def generate_solution(
         self,
@@ -56,14 +68,12 @@ class LLMClient:
         Returns:
             Generated code solution
         """
-        prompt = ChatPromptTemplate.from_messages([
-            ("system", self._get_system_prompt(language)),
-            ("human", problem_statement)
-        ])
-        
-        chain = prompt | self.llm
-        
-        response = chain.invoke({})
+        messages = [
+            SystemMessage(content=self._get_system_prompt(language)),
+            HumanMessage(content=problem_statement),
+        ]
+
+        response = self.llm.invoke(messages)
         
         return response.content
     

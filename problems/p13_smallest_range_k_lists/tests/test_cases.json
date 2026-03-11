@@ -1,0 +1,62 @@
+[
+  {
+    "name": "classic_three_lists",
+    "description": "Standard example with three lists of varying lengths",
+    "nums": [[4, 10, 15, 24, 26], [0, 9, 12, 20], [5, 18, 22, 30]],
+    "expected": [20, 24]
+  },
+  {
+    "name": "identical_lists",
+    "description": "All lists are identical — range of size 0",
+    "nums": [[1, 2, 3], [1, 2, 3], [1, 2, 3]],
+    "expected": [1, 1]
+  },
+  {
+    "name": "single_element_lists",
+    "description": "Each list has exactly one element",
+    "nums": [[10], [11], [13]],
+    "expected": [10, 13]
+  },
+  {
+    "name": "overlapping_ranges",
+    "description": "Lists with overlapping value ranges",
+    "nums": [[1, 5, 8], [4, 12], [7, 8, 10]],
+    "expected": [4, 7]
+  },
+  {
+    "name": "single_list",
+    "description": "k=1, range is just the first element",
+    "nums": [[3, 7, 11]],
+    "expected": [3, 3]
+  },
+  {
+    "name": "two_lists_adjacent",
+    "description": "Two lists with values right next to each other",
+    "nums": [[1, 3, 5], [2, 4, 6]],
+    "expected": [1, 2]
+  },
+  {
+    "name": "negative_numbers",
+    "description": "Lists containing negative numbers",
+    "nums": [[-5, -3, 0], [-4, -1, 2], [-6, -2, 1]],
+    "expected": [-6, -4]
+  },
+  {
+    "name": "large_gap",
+    "description": "One list is far from the others",
+    "nums": [[1, 2, 3], [100, 200, 300], [50, 150, 250]],
+    "expected": [3, 100]
+  },
+  {
+    "name": "all_same_values",
+    "description": "Every element across all lists is the same",
+    "nums": [[5, 5, 5], [5, 5], [5, 5, 5, 5]],
+    "expected": [5, 5]
+  },
+  {
+    "name": "two_elements_each",
+    "description": "Three lists with two elements each",
+    "nums": [[1, 10], [2, 9], [3, 8]],
+    "expected": [1, 3]
+  }
+]

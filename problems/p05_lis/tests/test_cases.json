@@ -1,0 +1,62 @@
+[
+  {
+    "name": "standard_case",
+    "description": "Standard LIS example",
+    "nums": [10, 9, 2, 5, 3, 7, 101, 18],
+    "expected": 4
+  },
+  {
+    "name": "alternating",
+    "description": "Alternating values",
+    "nums": [0, 1, 0, 3, 2, 3],
+    "expected": 4
+  },
+  {
+    "name": "all_equal",
+    "description": "All elements equal (strictly increasing -> length 1)",
+    "nums": [7, 7, 7, 7, 7, 7, 7],
+    "expected": 1
+  },
+  {
+    "name": "single_element",
+    "description": "Single element array",
+    "nums": [1],
+    "expected": 1
+  },
+  {
+    "name": "sorted_ascending",
+    "description": "Already sorted ascending",
+    "nums": [1, 2, 3, 4, 5],
+    "expected": 5
+  },
+  {
+    "name": "sorted_descending",
+    "description": "Sorted descending (LIS length is 1)",
+    "nums": [5, 4, 3, 2, 1],
+    "expected": 1
+  },
+  {
+    "name": "two_elements_increasing",
+    "description": "Two increasing elements",
+    "nums": [1, 2],
+    "expected": 2
+  },
+  {
+    "name": "two_elements_decreasing",
+    "description": "Two decreasing elements",
+    "nums": [2, 1],
+    "expected": 1
+  },
+  {
+    "name": "negative_numbers",
+    "description": "Array with negative numbers",
+    "nums": [-3, -1, -2, 0, 4, 2],
+    "expected": 4
+  },
+  {
+    "name": "longer_sequence",
+    "description": "Longer array requiring patience sort",
+    "nums": [3, 5, 6, 2, 5, 4, 19, 5, 6, 7, 12],
+    "expected": 6
+  }
+]
